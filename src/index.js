@@ -1,17 +1,35 @@
-import React from 'react';
+import React, {useState, createContext} from 'react';
 import ReactDOM from 'react-dom';
+import { useRoutes } from "hookrouter";
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import routes from "./Routes/Routes";
+import Home from './Pages/Home';
+import reducer from './Reducers/reducer'
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+// Using React createContext()  to manage state
+export const RepositoryContext = createContext();
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// Initializing state into Provider value
+const initialState = {repositories: [], loading: false}
+
+function App() {
+    const [result, setResult] = useState({});
+
+    // Use hookrouter to switch between pages
+    // 'routes' are predefined in Routes file
+    const routeResult = useRoutes(routes);
+    return (
+        <RepositoryContext.Provider value={{
+            reducer,
+            initialState,
+            result,
+            setResult
+        }}>
+            {routeResult ? routeResult : <Home/>}
+        </RepositoryContext.Provider>
+
+    );
+}
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);
